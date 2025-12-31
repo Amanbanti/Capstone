@@ -19,3 +19,36 @@ const storage = multer.diskStorage({
     cb(null, uniqueName);
   },
 });
+
+// File filter
+const fileFilter = (req, file, cb) => {
+  const allowedTypes = /jpeg|jpg|png|gif/;
+  const ext = path.extname(file.originalname).toLowerCase();
+  if (allowedTypes.test(ext)) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only image files are allowed (jpeg, jpg, png, gif).'));
+  }
+};
+
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+});
+
+export const uploadSingleScanImage = (req, res, next) => {
+  const uploadMiddleware = upload.single('scanImage');
+
+  uploadMiddleware(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      // Multer-specific errors (like file too large)
+      return res.status(400).json({ message: `Multer Error: ${err.message}` });
+    } else if (err) {
+      // General errors (like invalid file type)
+      return res.status(400).json({ message: `Upload Error: ${err.message}` });
+    }
+
+    next();
+  });
+};
