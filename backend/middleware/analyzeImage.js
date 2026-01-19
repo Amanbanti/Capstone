@@ -150,6 +150,7 @@ export const analyzeImage = (req, res, next) => {
   }
 
   catch(err){
-
+    console.error("AI analysis middleware failed:", err.message);
+    res.status(500).json({ error: "AI analysis failed", detail: err.message });
   }
 }
