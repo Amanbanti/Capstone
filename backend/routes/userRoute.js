@@ -23,5 +23,7 @@ router.get("/:id", protect, admin, getUserById);
 router.post("/", registerUser);
 router.post("/logout", logoutUser);
 router.post("/login", authUser);
+router.put("/profile", protect, updateUserProfile);
+router.put("/update-password", protect, updatePassword);
 
 export default router;
